@@ -39,4 +39,15 @@ contract GameManager {
         activeGames[_gameId].bothReady = true;
         emit joinedGame(_gameId, _player2);
     }
+
+    //player 1 calls to set wager
+    function newWager(uint _amount, uint _gameId) payable onlyPlayer1(_gameId) {
+        activeGames[_gameId].wager = _amount;
+    }
+
+    //player2 calls to join wager
+    function joinWager(uint _gameId) payable onlyPlayer2(_gameId) {
+        _amount = activeGames[_gameId].wager;
+        
+    }
 }

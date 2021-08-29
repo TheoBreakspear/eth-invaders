@@ -1,35 +1,42 @@
 pragma solidity >=0.4.16 <0.9.0;
 
-//@title keeps track of information for active games
+//keeps track of information for active games
 contract GameManager {
 
     event NewGame(uint gameId, address player1);
-    event gameConfirmed(uint gameId)
+    event joinedGame(uint gameId)
 
-    //@dev represents a game being played
+    //represents a game being played
     struct Game {
         address player1;
         address player2;
+        uint wager;
         bool bothReady;
-        uint8 winner;
     }
 
-    //@dev maps game ID to game
+    //maps game ID to game & stores active games
     mapping (uint => Game) public activeGames; 
     
-    //@dev launches new game and sets player 1 and gameCode
-    function createGame(address _player1, address _player2) external {
-        require(msg.sender == _player1);
-        uint _gameId = uint(keccak256(abi.encodePacked(_player1, _player2)));
-        activeGames[_gameId] = Game(_player1, _player2, false, 0);
+    //takes values for proposed player2 and wager to create new game with msg.sender as player1  
+    function newGame(address _player2) external {
+        uint _gameId = uint(keccak256(abi.encodePacked(msg.sender, _player2)));
+        activeGames[_gameId] = Game(msg.sender, _player2, 0, false);
         emit NewGame(_gameId, _player1);
     } 
 
-    //@dev player 2 calls to confirm game
-    function confirmGame(_gameId) external {
-        require(activeGames[_gameId].player2 == msg.sender);
+    modifier onlyPlayer1(_gameId){
+        require(msg.sender == activeGames[_gameId].player1);
+        _;
+    }
+
+    modifier onlyPlayer2(_gameId){
+        require(msg.sender == activeGames[_gameId].player2);
+        _;
+    }
+
+    //player 2 calls to confirm game
+    function joinGame(uint _gameId) external onlyPlayer2(_gameId) {
         activeGames[_gameId].bothReady = true;
-        emit gameConfirmed(_gameId) //triggers start of game
+        emit joinedGame(_gameId, _player2);
     }
 }
-

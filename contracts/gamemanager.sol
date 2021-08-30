@@ -5,7 +5,7 @@ contract GameManager {
 
     event NewGame(uint gameId, address player1);
     event JoinedGame(uint gameId);
-    event NewWager(uint amount);
+    event NewWager(uint gameId, uint amount);
 
     //represents a game being played
     struct Game {
@@ -44,12 +44,13 @@ contract GameManager {
     //player 1 calls to set wager
     function newWager(uint _amount, uint _gameId) private payable onlyPlayer1(_gameId) {
         activeGames[_gameId].wager = _amount;
-        emit NewWager(_amount);
+        emit NewWager(_gameId, _amount);
     }
 
     //player2 calls to join wager
     function joinWager(uint _gameId) private payable onlyPlayer2(_gameId) {
         _amount = activeGames[_gameId].wager;
-        
+        require(msg.value == _amount);
+        activeGames[_gameId].wager++;
     }
 }

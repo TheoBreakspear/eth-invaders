@@ -1,7 +1,13 @@
+*{
+    width: auto;
+    text-align: center;
+}
+
 div {
     padding: 30px;
 }
 
 #game-setup {
     display: flex;
+    justify-content: center;
 }

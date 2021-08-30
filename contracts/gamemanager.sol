@@ -6,6 +6,7 @@ contract GameManager {
     event NewGame(uint gameId, address player1);
     event JoinedGame(uint gameId);
     event NewWager(uint gameId, uint amount);
+    event DeclareWinner(uint gameId, address player);
 
     //represents a game being played
     struct Game {
@@ -53,4 +54,19 @@ contract GameManager {
         require(msg.value == _amount);
         activeGames[_gameId].wager++;
     }
+
+    /*
+    Something to launch game for both players at right time
+    */
+
+    /*
+    Need something to determine winner - how to stop user cheating with their own JS to send "I have won" signal if game runs in front end? 
+    */
+
+    //pays winner
+    function payWinner(uint _gameId, address _winner) private {
+        emit DeclareWinner(_gameId, _winner);
+        _winner.transfer(activeGames[_gameId].wager);
+    }
+
 }
